@@ -1,0 +1,14 @@
+## Erlang node name — built dynamically by rel/env.sh.eex
+## Format: demo@<wg_ip>  (e.g. demo@10.103.0.1)
+-name ${RELEASE_NODE}
+
+## Erlang cookie shared across all cluster instances
+## Must be identical on every node (set via RELEASE_COOKIE on Clever Cloud)
+-setcookie ${RELEASE_COOKIE}
+
+## Erlang distribution port range (inter-node communication)
+-kernel inet_dist_listen_min 9000
+-kernel inet_dist_listen_max 9010
+
+## Enable heartbeat watchdog in prod
+##-heart

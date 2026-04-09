@@ -1,0 +1,25 @@
+# Build artifacts
+/_build/
+/cover/
+/deps/
+/doc/
+/.fetch
+
+# Generated on build
+erl_crash.dump
+*.ez
+
+# Release artifacts
+/priv/static/assets/
+
+# Environment-specific config
+*.secret.exs
+.env
+.clever.json
+.claude/
+
+# Test coverage
+/cover/
+
+# Elixir LS
+.elixir_ls/

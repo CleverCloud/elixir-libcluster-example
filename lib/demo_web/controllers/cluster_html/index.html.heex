@@ -1,0 +1,58 @@
+<h1>Cluster Status</h1>
+
+<div id="cluster-panel" style="border: 1px solid #30363d; border-radius: 6px; padding: 1rem;">
+  <p>
+    Current node: <strong id="current-node"><%= @current_node %></strong>
+  </p>
+  <p>
+    Connected peers: <strong id="peer-count"><%= length(@peers) %></strong>
+    <span id="status-indicator" style="margin-left: 0.5rem; font-size: 0.8em; color: #8b949e;">
+      (refreshing every 5s)
+    </span>
+  </p>
+
+  <h2 style="font-size: 1em; color: #8b949e;">Peers</h2>
+  <ul id="peer-list" style="padding-left: 1.5rem;">
+    <%= if @peers == [] do %>
+      <li id="no-peers" style="color: #f85149;">No peers — isolated node</li>
+    <% else %>
+      <%= for peer <- @peers do %>
+        <li><code><%= peer %></code></li>
+      <% end %>
+    <% end %>
+  </ul>
+
+  <p style="color: #8b949e; font-size: 0.85em;">
+    Total cluster: <span id="total-count"><%= length(@peers) + 1 %></span> node(s)
+  </p>
+</div>
+
+<script>
+  function renderPeers(peers) {
+    const list = document.getElementById('peer-list');
+    if (peers.length === 0) {
+      list.innerHTML = '<li style="color: #f85149;">No peers — isolated node</li>';
+    } else {
+      list.innerHTML = peers.map(n => `<li><code>${n}</code></li>`).join('');
+    }
+  }
+
+  function updateCluster() {
+    fetch('/cluster', { headers: { Accept: 'application/json' } })
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('current-node').textContent = data.node;
+        document.getElementById('peer-count').textContent = data.peers.length;
+        document.getElementById('total-count').textContent = data.total;
+        renderPeers(data.peers);
+        document.getElementById('status-indicator').textContent =
+          'last update: ' + new Date().toLocaleTimeString();
+      })
+      .catch(err => {
+        console.error('Cluster fetch error:', err);
+        document.getElementById('status-indicator').textContent = 'connection error';
+      });
+  }
+
+  setInterval(updateCluster, 5000);
+</script>
